@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách người dùng</title>
+</head>
+<body>
+    <h1>Danh sách người dùng</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã người dùng</th>
+                <th>Tên đăng nhập</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Ngày đăng ký</th>
+                <th>Avatar</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.MaNguoiDung }}</td>
+                <td>{{ user.TenDangNhap }}</td>
+                <td>{{ user.HoTen }}</td>
+                <td>{{ user.Email }}</td>
+                <td>{{ user.NgayDangKy }}</td>
+                <td>{{ user.Avatar }}</td>
+                <td>
+                    <a href="/users/update/{{ user.MaNguoiDung }}">Sửa</a>
+                    <a href="/users/details/{{ user.MaNguoiDung }}">Xem</a>
+                    <form action="/users/delete/{{ user.MaNguoiDung }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/users/create">Thêm mới</a>
+</body>
+</html>

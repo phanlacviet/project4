@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Sửa chia sẻ</title>
+</head>
+<body>
+    <h1>Sửa chia sẻ</h1>
+    <form method="POST" action="/shares/update/{{ share.MaChiaSe }}">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" value="{{ share.MaBaiViet }}" required><br>
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" value="{{ share.MaNguoiDung }}" required><br>
+        <label>Người nhận:</label><input type="text" name="NguoiNhan" value="{{ share.NguoiNhan }}"><br>
+        <button type="submit">Cập nhật</button>
+    </form>
+</body>
+</html>

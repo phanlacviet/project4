@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách bài viết</title>
+</head>
+<body>
+    <h1>Danh sách bài viết</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã bài viết</th>
+                <th>Tiêu đề</th>
+                <th>Ngày đăng</th>
+                <th>Lượt xem</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr>
+                <td>{{ post.MaBaiViet }}</td>
+                <td>{{ post.TieuDe }}</td>
+                <td>{{ post.NgayDang }}</td>
+                <td>{{ post.LuotXem }}</td>
+                <td>
+                    <a href="/posts/update/{{ post.MaBaiViet }}">Sửa</a>
+                    <form action="/posts/delete/{{ post.MaBaiViet }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/posts/create">Thêm mới</a>
+</body>
+</html>

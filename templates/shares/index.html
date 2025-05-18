@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách chia sẻ</title>
+</head>
+<body>
+    <h1>Danh sách chia sẻ</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã chia sẻ</th>
+                <th>Mã bài viết</th>
+                <th>Mã người dùng</th>
+                <th>Người nhận</th>
+                <th>Ngày chia sẻ</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for share in shares %}
+            <tr>
+                <td>{{ share.MaChiaSe }}</td>
+                <td>{{ share.MaBaiViet }}</td>
+                <td>{{ share.MaNguoiDung }}</td>
+                <td>{{ share.NguoiNhan }}</td>
+                <td>{{ share.NgayChiaSe }}</td>
+                <td>
+                    <a href="/shares/update/{{ share.MaChiaSe }}">Sửa</a>
+                    <form action="/shares/delete/{{ share.MaChiaSe }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/shares/create">Thêm mới</a>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Sửa nguyên liệu</title>
+</head>
+<body>
+    <h1>Sửa nguyên liệu</h1>
+    <form method="POST" action="/ingredients/update/{{ ingredient.MaNguyenLieu }}">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" value="{{ ingredient.MaBaiViet }}" required><br>
+        <label>Tên nguyên liệu:</label><input type="text" name="TenNguyenLieu" value="{{ ingredient.TenNguyenLieu }}" required><br>
+        <label>Số lượng:</label><input type="text" name="SoLuong" value="{{ ingredient.SoLuong }}"><br>
+        <button type="submit">Cập nhật</button>
+    </form>
+</body>
+</html>

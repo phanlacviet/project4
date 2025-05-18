@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách bình luận</title>
+</head>
+<body>
+    <h1>Danh sách bình luận</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã bình luận</th>
+                <th>Mã bài viết</th>
+                <th>Mã người dùng</th>
+                <th>Nội dung</th>
+                <th>Ngày bình luận</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr>
+                <td>{{ comment.MaBinhLuan }}</td>
+                <td>{{ comment.MaBaiViet }}</td>
+                <td>{{ comment.MaNguoiDung }}</td>
+                <td>{{ comment.NoiDung }}</td>
+                <td>{{ comment.NgayBinhLuan }}</td>
+                <td>
+                    <a href="/comments/update/{{ comment.MaBinhLuan }}">Sửa</a>
+                    <form action="/comments/delete/{{ comment.MaBinhLuan }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/comments/create">Thêm mới</a>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách nguyên liệu</title>
+</head>
+<body>
+    <h1>Danh sách nguyên liệu</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã nguyên liệu</th>
+                <th>Mã bài viết</th>
+                <th>Tên nguyên liệu</th>
+                <th>Số lượng</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ingredient in ingredients %}
+            <tr>
+                <td>{{ ingredient.MaNguyenLieu }}</td>
+                <td>{{ ingredient.MaBaiViet }}</td>
+                <td>{{ ingredient.TenNguyenLieu }}</td>
+                <td>{{ ingredient.SoLuong }}</td>
+                <td>
+                    <a href="/ingredients/update/{{ ingredient.MaNguyenLieu }}">Sửa</a>
+                    <form action="/ingredients/delete/{{ ingredient.MaNguyenLieu }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/ingredients/create">Thêm mới</a>
+</body>
+</html>

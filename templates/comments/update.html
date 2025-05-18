@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Sửa bình luận</title>
+</head>
+<body>
+    <h1>Sửa bình luận</h1>
+    <form method="POST" action="/comments/update/{{ comment.MaBinhLuan }}">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" value="{{ comment.MaBaiViet }}" required><br>
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" value="{{ comment.MaNguoiDung }}" required><br>
+        <label>Nội dung:</label><textarea name="NoiDung" required>{{ comment.NoiDung }}</textarea><br>
+        <button type="submit">Cập nhật</button>
+    </form>
+</body>
+</html>

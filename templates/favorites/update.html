@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Sửa yêu thích</title>
+</head>
+<body>
+    <h1>Sửa yêu thích</h1>
+    <form method="POST" action="/favorites/update/{{ favorite.MaYeuThich }}">
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" value="{{ favorite.MaNguoiDung }}" required><br>
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" value="{{ favorite.MaBaiViet }}" required><br>
+        <button type="submit">Cập nhật</button>
+    </form>
+</body>
+</html>

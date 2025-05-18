@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm chia sẻ</title>
+</head>
+<body>
+    <h1>Thêm chia sẻ</h1>
+    <form method="POST" action="/shares/create">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" required><br>
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" required><br>
+        <label>Người nhận:</label><input type="text" name="NguoiNhan"><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>

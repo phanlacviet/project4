@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm yêu thích</title>
+</head>
+<body>
+    <h1>Thêm yêu thích</h1>
+    <form method="POST" action="/favorites/create">
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" required><br>
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" required><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>

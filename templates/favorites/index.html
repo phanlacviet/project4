@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách yêu thích</title>
+</head>
+<body>
+    <h1>Danh sách yêu thích</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã yêu thích</th>
+                <th>Mã người dùng</th>
+                <th>Mã bài viết</th>
+                <th>Ngày thêm</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for favorite in favorites %}
+            <tr>
+                <td>{{ favorite.MaYeuThich }}</td>
+                <td>{{ favorite.MaNguoiDung }}</td>
+                <td>{{ favorite.MaBaiViet }}</td>
+                <td>{{ favorite.NgayThem }}</td>
+                <td>
+                    <a href="/favorites/update/{{ favorite.MaYeuThich }}">Sửa</a>
+                    <form action="/favorites/delete/{{ favorite.MaYeuThich }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/favorites/create">Thêm mới</a>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm đánh giá</title>
+</head>
+<body>
+    <h1>Thêm đánh giá</h1>
+    <form method="POST" action="/ratings/create">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" required><br>
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" required><br>
+        <label>Điểm (1-5):</label><input type="number" name="Diem" min="1" max="5" required><br>
+        <label>Nội dung:</label><textarea name="NoiDung"></textarea><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>

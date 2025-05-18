@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm người dùng</title>
+</head>
+<body>
+    <h1>Thêm người dùng</h1>
+    <form method="POST" action="/users/create">
+        <label>Tên đăng nhập:</label><input type="text" name="TenDangNhap" required><br>
+        <label>Mật khẩu:</label><input type="password" name="MatKhau" required><br>
+        <label>Họ tên:</label><input type="text" name="HoTen"><br>
+        <label>Email:</label><input type="email" name="Email" required><br>
+        <label>Avatar:</label><input type="text" name="Avatar"><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Danh sách đánh giá</title>
+</head>
+<body>
+    <h1>Danh sách đánh giá</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Mã đánh giá</th>
+                <th>Mã bài viết</th>
+                <th>Mã người dùng</th>
+                <th>Điểm</th>
+                <th>Nội dung</th>
+                <th>Ngày đánh giá</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rating in ratings %}
+            <tr>
+                <td>{{ rating.MaDanhGia }}</td>
+                <td>{{ rating.MaBaiViet }}</td>
+                <td>{{ rating.MaNguoiDung }}</td>
+                <td>{{ rating.Diem }}</td>
+                <td>{{ rating.NoiDung }}</td>
+                <td>{{ rating.NgayDanhGia }}</td>
+                <td>
+                    <a href="/ratings/update/{{ rating.MaDanhGia }}">Sửa</a>
+                    <form action="/ratings/delete/{{ rating.MaDanhGia }}" method="POST" style="display:inline;">
+                        <button type="submit">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/ratings/create">Thêm mới</a>
+</body>
+</html>

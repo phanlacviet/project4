@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm bài viết</title>
+</head>
+<body>
+    <h1>Thêm bài viết</h1>
+    <form method="POST" action="/posts/create">
+        <label>Mã người dùng:</label><input type="number" name="MaNguoiDung" required><br>
+        <label>Tiêu đề:</label><input type="text" name="TieuDe" required><br>
+        <label>Nội dung:</label><textarea name="NoiDung" required></textarea><br>
+        <label>Hình ảnh:</label><input type="text" name="HinhAnh"><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>

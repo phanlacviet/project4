@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Thêm nguyên liệu</title>
+</head>
+<body>
+    <h1>Thêm nguyên liệu</h1>
+    <form method="POST" action="/ingredients/create">
+        <label>Mã bài viết:</label><input type="number" name="MaBaiViet" required><br>
+        <label>Tên nguyên liệu:</label><input type="text" name="TenNguyenLieu" required><br>
+        <label>Số lượng:</label><input type="text" name="SoLuong"><br>
+        <button type="submit">Thêm</button>
+    </form>
+</body>
+</html>
