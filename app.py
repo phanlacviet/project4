@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from users.crud import get_users, create_user, get_user_by_id, update_user, delete_user
 from posts.crud import get_posts, create_post, get_post_by_id, update_post, delete_post
 from comments.crud import get_comments, create_comment, get_comment_by_id, update_comment, delete_comment
@@ -6,8 +6,33 @@ from shares.crud import get_shares, create_share, get_share_by_id, update_share,
 from ingredients.crud import get_ingredients, create_ingredient, get_ingredient_by_id, update_ingredient, delete_ingredient
 from favorites.crud import get_favorites, create_favorite, get_favorite_by_id, update_favorite, delete_favorite
 from ratings.crud import get_ratings, create_rating, get_rating_by_id, update_rating, delete_rating
+from Frontend import (register, login, home, logout, upload_form, upload_file, get_baiviet, check_binh_luan, 
+                     get_luot_like, get_luot_BL, get_luot_chia_se, get_chitiet_baiviet,dang_binh_luan)
+from Frontend import danh_gia,check_danh_gia
+import os
+import pyodbc
 
 app = Flask(__name__)
+app.secret_key = 'supersecretkey'  # Khóa bí mật cho flash messages
+app.config['UPLOAD_FOLDER'] = 'static/Images'  # Thư mục lưu file upload
+
+# Đảm bảo thư mục upload tồn tại
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# Hàm kiểm tra file hợp lệ
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'jpg'
+
+# Hàm kết nối cơ sở dữ liệu
+def get_connection():
+    conn_str = (
+        "Driver={SQL Server};"
+        "Server=DESKTOP-Q6N4J46\\SQLEXPRESS;"  
+        "Database=TVV_TTCD2_CongThucNauAn2;"
+        "Trusted_Connection=yes"
+    )
+    return pyodbc.connect(conn_str)
 
 # Users Routes
 @app.route('/users', methods=['GET'])
@@ -252,6 +277,7 @@ def update_favorite_submit(favorite_id):
 def delete_favorite_submit(favorite_id):
     delete_favorite(favorite_id)
     return redirect(url_for('list_favorites'))
+
 # Ratings Routes
 @app.route('/ratings', methods=['GET'])
 def list_ratings():
@@ -293,6 +319,84 @@ def update_rating_submit(rating_id):
 def delete_rating_submit(rating_id):
     delete_rating(rating_id)
     return redirect(url_for('list_ratings'))
+
+# Frontend Routes
+@app.route('/register', methods=['GET', 'POST'])
+def register_route():
+    return register()
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_route():
+    return login()
+
+@app.route('/home')
+def home_route():
+    return home()
+
+@app.route('/logout')
+def logout_route():
+    return logout()
+
+@app.route('/upload_form')
+def upload_form_route():
+    return upload_form()
+
+@app.route('/upload', methods=['POST'])
+def upload_file_route():
+    return upload_file()
+
+# Route hiển thị danh sách bài viết
+@app.route('/danhsachbaiviet')
+def danhsachbaiviet_route():
+    posts = get_baiviet()
+    # Tạo danh sách bài viết kèm thông tin bổ sung
+    posts_with_info = []
+    for post in posts:
+        luot_like = get_luot_like(post.MaBaiViet)
+        luot_BL = get_luot_BL(post.MaBaiViet)
+        luot_chia_se = get_luot_chia_se(post.MaBaiViet)
+        posts_with_info.append({
+            'MaBaiViet': post.MaBaiViet,
+            'TieuDe': post.TieuDe,
+            'NoiDung': post.NoiDung,
+            'HinhAnh': post.HinhAnh,
+            'LuotXem': post.LuotXem,
+            'LuotLike': luot_like,
+            'LuotBL': luot_BL,
+            'LuotChiaSe': luot_chia_se
+        })
+    return render_template('Frontend/danhsachbaiviet.html', posts=posts_with_info)
+
+# Route hiển thị chi tiết bài viết
+@app.route('/chitietbaiviet/<int:id>')
+def chitietbaiviet_route(id):
+    data = get_chitiet_baiviet(id)
+    ma_nguoi_dung = session.get('user_id')  # Lấy mã người dùng từ session
+    da_binh_luan = 0
+    da_danh_gia = 0
+    if ma_nguoi_dung:
+        da_binh_luan = check_binh_luan(id, ma_nguoi_dung)
+        da_danh_gia = check_danh_gia(id,ma_nguoi_dung)
+    return render_template('Frontend/chitietbaiviet.html', post=data['post'], avg_rating=data['avg_rating'], comments=data['comments'],da_binh_luan=da_binh_luan,da_danh_gia=da_danh_gia)
+
+@app.route('/dangbinhluan/', methods=['POST'])
+def dangbinhluan_route():
+    
+    ma_nguoi_dung = session['user_id']
+    ma_bai_viet = request.form['MaBaiViet']
+    noi_dung = request.form['NoiDung']
+    dang_binh_luan(ma_nguoi_dung, ma_bai_viet, noi_dung)
+    return redirect(url_for('chitietbaiviet_route', id=ma_bai_viet))
+
+@app.route('/danhgia/', methods=['POST'])
+def danh_gia_route():
+    ma_nguoi_dung = session['user_id']
+    ma_bai_viet = request.form['MaBaiViet']
+    diem = request.form['Diem']
+    noiDung =  request.form['NoiDung']
+    danh_gia(ma_nguoi_dung,ma_bai_viet,diem,noiDung)
+    return redirect(url_for('chitietbaiviet_route', id=ma_bai_viet))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

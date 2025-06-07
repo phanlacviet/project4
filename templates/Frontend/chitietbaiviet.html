@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết bài viết</title>
+    <style>
+        .rating {
+            display: inline-block;
+            direction: rtl;
+        }
+
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+        }
+
+        .rating input:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #f5c518;
+        }
+    </style>
+</head>
+<body>
+    {% include 'Frontend/header.html' %}
+    <h1>{{ post.TieuDe }}</h1>
+    <p>{{ post.NoiDung }}</p>
+    {% if post.HinhAnh %}
+    <img src="/static/Images/{{ post.HinhAnh }}" alt="Hình ảnh bài viết">
+    {% endif %}
+    <p><strong>Lượt xem:</strong> {{ post.LuotXem }}</p>
+    
+    <h2>Đánh giá trung bình: {{ avg_rating | round(2) }}</h2>
+    {% if session.user_id %}
+        {% if da_danh_gia == 0 %}
+            <form method="post" action="/danhgia">
+                <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+                <label>Đánh giá:</label><br>
+                <div class="rating">
+                    {% for star in range(5, 0, -1) %}
+                        <input type="radio" id="star{{ star }}" name="Diem" value="{{ star }}" required>
+                        <label for="star{{ star }}">★</label>
+                    {% endfor %}
+                </div>
+                <textarea name="NoiDung"></textarea>
+                <button type="submit">Gửi đánh giá</button>
+            </form>
+        {% else %}
+            <p>Bạn đã đánh giá</p>
+        {% endif %}
+    {% else %}
+        <p>Vui lòng đăng nhập để đánh giá</p>
+    {% endif %}
+    <h3>Bình luận:</h3>
+        {% if session.user_id %}
+            {% if da_binh_luan == 0 %}
+                <form method="post" action="/dangbinhluan">
+                    <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+                    <textarea name="NoiDung"></textarea>
+                    <button type="submit">Đăng bình luận</button>
+                </form>
+            {% else %}
+                <p>Bạn đã bình luận</p>
+    {% endif %}
+        {% else %}
+            <textarea name="NoiDung"></textarea>
+            <a href="/home" ><button>Đăng bình luận</button></a>
+        {% endif %}
+    {% for comment in comments %}
+    <div style="margin-bottom: 20px;">
+        <img src="/static/Images/{{ comment.Avatar }}" alt="Avatar" width="50" style="vertical-align: middle;">
+        <strong style="display: inline-block; vertical-align: middle;">{{ comment.TenDangNhap }}</strong>
+        <p>{{ comment.NoiDung }}</p>
+    </div>
+    {% endfor %}
+    {% include 'Frontend/footer.html' %}
+</body>
+</html>

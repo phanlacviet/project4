@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng Nhập - TVV Cooking</title>
+  <link rel="stylesheet" href="/static/login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="login-container">
+    <form class="login-form" method="POST" action="/login">
+      <h2>Xin Chào Người Đẹp</h2>
+      <p>Đăng nhập để tiếp tục khám phá công thức nấu ăn!</p>
+
+      <input type="text" name="TenDangNhap" placeholder="Tên đăng nhập" required>
+      <input type="password" name="MatKhau" placeholder="Mật khẩu" required>
+
+      <div class="actions">
+        <label><input type="checkbox"> Nhớ mật khẩu</label>
+        <a href="#">Quên mật khẩu?</a>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="error-message">
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <button type="submit">Đăng Nhập</button>
+
+      <div class="signup-link">
+        Chưa có tài khoản? <a href="/register">Đăng ký</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

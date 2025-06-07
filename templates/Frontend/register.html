@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng Ký - TVV Cooking</title>
+  <link rel="stylesheet" href="/static/register.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="register-container">
+    <form class="register-form" method="POST" action="/register">
+      <h2>Tạo Tài Khoản Mới 🌟</h2>
+      <p>Tham gia cộng đồng yêu bếp của TVV Cooking</p>
+
+      <input type="text" name="HoTen" placeholder="Họ và tên" required>
+      <input type="email" name="Email" placeholder="Email" required>
+      <input type="text" name="TenDangNhap" placeholder="Tên đăng nhập" required>
+      <input type="password" name="MatKhau" placeholder="Mật khẩu" required>
+      <input type="password" name="NhapLaiMatKhau" placeholder="Nhập lại mật khẩu" required>
+
+      <div class="agree">
+        <label>
+          <input type="checkbox" required>
+          Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a>
+        </label>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="error-message">
+            {% for message in messages %}
+              <p>{{ message }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <button type="submit">Đăng Ký</button>
+
+      <div class="login-link">
+        Đã có tài khoản? <a href="/login">Đăng nhập</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,229 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #ffffff;
+  }
+  
+  .header {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    border-radius: 40px;
+    margin: 10px;
+    
+  }
+  
+  .logo {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .logo img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%; /* Tròn 100% */
+    object-fit: cover;
+    display: block;
+  }
+  
+  
+  .navbar {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .navbar a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    position: relative;
+  }
+  
+  .navbar .highlight {
+    font-weight: bold;
+    font-size: 14px;
+    position: relative;
+    top: -10px;
+  }
+  
+  .header-icons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transform: translateX(-28px);
+  }
+  
+  .icon {
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .yellow {
+    color: gold;
+  }
+  
+  .menu {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 100;
+    min-width: 120px; /* ✅ Đảm bảo đủ rộng để chữ không xuống dòng */
+  }
+
+  .dropdown a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: black;
+    white-space: nowrap; /* ✅ Không cho xuống dòng */
+  }
+
+  .dropdown a:hover {
+    background-color: #f1f1f1;
+  }
+
+  .banner {
+    width: 100%;
+    max-height: 450px;
+    overflow: hidden;
+    border-radius: 16px;      /* Bo góc mềm mại */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    margin: 20px auto;
+  }
+  
+  .banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;        /* Giúp ảnh không bị méo */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Hiệu ứng phóng nhẹ khi hover */
+  .banner:hover img {
+    transform: scale(1.02);
+  }
+  
+  .search-container {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 2px 8px;
+  }
+  
+  .search-input {
+    border: none;
+    outline: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    width: 160px;
+  }
+  
+  .search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    color: #555;
+    font-size: 16px;
+  }
+  
+  .search-button:hover {
+    color: #000;
+  }
+  /*điện thoại*/
+  .icon {
+    font-size: 20px;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover .icon {
+    color: #007bff; /* Màu xanh khi hover */
+  }
+  
+
+
+  /*Footer*/
+ 
+  /* Đặt trong style.css hoặc trong thẻ <style> */
+  .footer-basic {
+    padding:40px 0;
+    background-color:#ffffff;
+    color:#4b4c4d;
+  }
+  
+  .footer-basic ul {
+    padding:0;
+    list-style:none;
+    text-align:center;
+    font-size:18px;
+    line-height:1.6;
+    margin-bottom:0;
+  }
+  
+  .footer-basic li {
+    padding:0 10px;
+  }
+  
+  .footer-basic ul a {
+    color:inherit;
+    text-decoration:none;
+    opacity:0.8;
+  }
+  
+  .footer-basic ul a:hover {
+    opacity:1;
+  }
+  
+  .footer-basic .social {
+    text-align:center;
+    padding-bottom:25px;
+  }
+  
+  .footer-basic .social > a {
+    font-size:24px;
+    width:40px;
+    height:40px;
+    line-height:40px;
+    display:inline-block;
+    text-align:center;
+    border-radius:50%;
+    border:1px solid #ccc;
+    margin:0 8px;
+    color:inherit;
+    opacity:0.75;
+  }
+  
+  .footer-basic .social > a:hover {
+    opacity:0.9;
+  }
+  
+  .footer-basic .copyright {
+    margin-top:15px;
+    text-align:center;
+    font-size:13px;
+    color:#aaa;
+    margin-bottom:0;
+  }
+  
+  /* Credit to https://epicbootstrap.com/snippets/footer-basic */

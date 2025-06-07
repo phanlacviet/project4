@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang Chủ - Công Thức Nấu Ăn</title>
+  <link rel="stylesheet" href="/static/trangchu.css">
+</head>
+<body>
+
+  {% include 'Frontend/header.html' %}
+
+  
+  <div class="banner">
+    <img src="/static/images/anhnenchef.jpg" alt="Giới thiệu về nấu ăn">
+  </div>
+
+  <section class="categories">
+    <h2 class="section-title">Khám Phá Theo Danh Mục</h2>
+    <div class="category-grid">
+      <div class="category-card">
+        <img src="/static/images/monchinh.jpg" alt="Món chính">
+        <h3>Món Chính</h3>
+      </div>
+      <div class="category-card">
+        <img src="/static/images/anchay.jpg" alt="Ăn chay">
+        <h3>Ăn Chay</h3>
+      </div>
+      <div class="category-card">
+        <img src="/static/images/montrangmieng.jpg" alt="Món tráng miệng">
+        <h3>Món Tráng Miệng</h3>
+      </div>
+      <div class="category-card">
+        <img src="/static/images/thucuong.jpg" alt="Thức uống">
+        <h3>Thức Uống</h3>
+      </div>
+      <div class="category-card">
+        <img src="/static/images/giadinh.jpg" alt="Cho gia đình">
+        <h3>Cho Gia Đình</h3>
+      </div>
+    </div>
+  </section>
+
+  
+  {% include 'Frontend/footer.html' %}
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const menu = document.querySelector('.menu');
+      const dropdown = document.getElementById('menuDropdown');
+
+      if (menu && dropdown) {
+        menu.addEventListener('click', function (event) {
+          event.stopPropagation();
+          dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        });
+
+        document.addEventListener('click', function (event) {
+          if (!menu.contains(event.target)) {
+            dropdown.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

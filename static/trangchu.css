@@ -1,0 +1,69 @@
+/* Danh mục món ăn */
+.categories {
+    padding: 60px 20px;
+    background-color: #ffffff;
+    text-align: center;
+  }
+  
+  .section-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    color: #333;
+  }
+  
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .category-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .category-card img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  
+  .category-card h3 {
+    padding: 15px 10px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  }
+  .banner {
+    width: 100%;
+    max-height: 450px;
+    overflow: hidden;
+    border-radius: 16px;      /* Bo góc mềm mại */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+    margin: 20px auto;
+  }
+  
+  .banner img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;        /* Giúp ảnh không bị méo */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Hiệu ứng phóng nhẹ khi hover */
+  .banner:hover img {
+    transform: scale(1.02);
+  }
+  
