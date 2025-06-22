@@ -1,0 +1,60 @@
+.user-profile {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.user-info, .user-posts {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.post-item {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+strong {
+    color: #555;
+}
+.edit-icon, .delete-icon {
+    margin-left: 10px;
+    text-decoration: none;
+}
+.edit-icon {
+    color: #007bff;
+}
+.delete-icon {
+    color: #dc3545;
+}

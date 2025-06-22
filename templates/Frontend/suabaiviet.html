@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Sửa Bài Viết</title>
+</head>
+<body>
+    <h1>Sửa Bài Viết</h1>
+    <form method="post" action="/updateUserPost" enctype="multipart/form-data">
+        <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+        <label for="TieuDe">Tiêu Đề:</label><br>
+        <input type="text" id="TieuDe" name="TieuDe" value="{{ post.TieuDe }}" required><br><br>
+        <label for="NoiDung">Nội Dung:</label><br>
+        <textarea id="NoiDung" name="NoiDung" required>{{ post.NoiDung }}</textarea><br><br>
+        <label for="HinhAnh">Ảnh Bài Viết:</label><br>
+        <input type="file" id="HinhAnh" name="HinhAnh" accept="image/*"><br>
+        {% if post.HinhAnh %}
+            <img src="/static/Images/{{ post.HinhAnh }}" alt="Ảnh hiện tại" width="200"><br><br>
+        {% endif %}
+        <button type="submit">Cập Nhật</button>
+    </form>
+</body>
+</html>

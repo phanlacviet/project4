@@ -10,7 +10,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 # Kiểm tra file hợp lệ
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'jpg'
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'jpg', 'jpeg', 'png', 'gif', 'jfif'}
 
 # Hàm xử lý đăng ký
 def register():
@@ -75,7 +75,8 @@ def logout():
 
 # Hàm hiển thị form upload
 def upload_form():
-    return render_template('Frontend/test.html')
+    ma_nguoi_dung = session['user_id']
+    return render_template('Frontend/dangbaiviet.html', ma_nguoi_dung=ma_nguoi_dung)
 
 # Hàm xử lý upload file
 def upload_file():
@@ -99,10 +100,10 @@ def upload_file():
         cursor.close()
         conn.close()
         flash('Đăng bài thành công')
-        return redirect(url_for('upload_form'))
+        return redirect(url_for('ThongTinCaNhan'))
     else:
         flash('Ảnh không phải đuôi .jpg')
-        return redirect(url_for('upload_form'))
+        return redirect(url_for('ThongTinCaNhan'))
     
 # Hàm lấy số lượt like của một bài viết
 def get_luot_like(idpost):
@@ -233,3 +234,127 @@ def check_danh_gia(ma_bai_viet,ma_nguoi_dung):
         return 1  
     else:
         return 0 
+def timkiem(TieuDe):
+    conn = get_connection()
+    cursor = conn.cursor()
+    search_term = f'%{TieuDe}%'
+    cursor.execute("SELECT * FROM TVV_BaiViet WHERE TieuDe LIKE ?", (search_term,))
+    ketquaTK = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return ketquaTK
+def check_thich(ma_bai_viet, ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM TVV_YeuThich WHERE MaBaiViet = ? AND MaNguoiDung = ?", (ma_bai_viet, ma_nguoi_dung))
+    check = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return 1 if check else 0
+
+def check_chia_se(ma_bai_viet, ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM TVV_ChiaSe WHERE MaBaiViet = ? AND MaNguoiDung = ?", (ma_bai_viet, ma_nguoi_dung))
+    check = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return 1 if check else 0
+
+def like_post(ma_nguoi_dung, ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO TVV_YeuThich (MaNguoiDung, MaBaiViet) VALUES (?, ?)", (ma_nguoi_dung, ma_bai_viet))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def unlike_post(ma_nguoi_dung, ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM TVV_YeuThich WHERE MaNguoiDung = ? AND MaBaiViet = ?", (ma_nguoi_dung, ma_bai_viet))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def share_post(ma_nguoi_dung, ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    nguoi_nhan = session.get('user_name', 'Unknown')  # Lấy tên người dùng từ session
+    cursor.execute("INSERT INTO TVV_ChiaSe (MaBaiViet, MaNguoiDung, NguoiNhan) VALUES (?, ?, ?)", (ma_bai_viet, ma_nguoi_dung, nguoi_nhan))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def unshare_post(ma_nguoi_dung, ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM TVV_ChiaSe WHERE MaBaiViet = ? AND MaNguoiDung = ?", (ma_bai_viet, ma_nguoi_dung))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def userPosts(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT *FROM TVV_BaiViet WHERE MaNguoiDung = ?", (ma_nguoi_dung))
+    userPosts = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return userPosts
+
+def userInfo(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT *FROM TVV_NguoiDung WHERE MaNguoiDung = ?", (ma_nguoi_dung))
+    userInfo = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return userInfo
+def updateUserPost(ma_bai_viet,ma_nguoi_dung,data):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE TVV_BaiViet
+        SET TieuDe = ?, NoiDung = ?, HinhAnh = ?
+        WHERE MaBaiViet = ? AND MaNguoiDung = ?
+    """, (data['MaNguoiDung'], data['TieuDe'], data['NoiDung'], data['HinhAnh'], ma_bai_viet, ma_nguoi_dung))
+    conn.commit()
+    cursor.close()
+    conn.close()
+def updateUserInfo(data):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("Update TVV_NguoiDung SET MatKhau = ?, HoTen = ?, Email = ?, Avatar = ? WHERE MaNguoiDung = ?"
+                   ,(data['MatKhau'], data['HoTen'], data['Email'], data['Avatar'], data['MaNguoiDung']))
+    conn.commit()
+    cursor.close()
+    conn.close()
+def get_post_by_id(ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM TVV_BaiViet WHERE MaBaiViet = ?", (ma_bai_viet,))
+    post = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return post
+
+def update_user_post(ma_bai_viet, ma_nguoi_dung, data):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE TVV_BaiViet
+        SET TieuDe = ?, NoiDung = ?, HinhAnh = ?
+        WHERE MaBaiViet = ? AND MaNguoiDung = ?
+    """, (data['TieuDe'], data['NoiDung'], data['HinhAnh'], ma_bai_viet, ma_nguoi_dung))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+def delete_user_post(ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM TVV_BaiViet WHERE MaBaiViet = ?", (ma_bai_viet,))
+    conn.commit()
+    cursor.close()
+    conn.close()

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Cá Nhân</title>
+    <link rel="stylesheet" href="/static/ThongTinNguoiDung.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    {% include 'Frontend/header.html' %}
+
+    <div class="user-profile">
+        <h1>Thông Tin Cá Nhân</h1>
+        
+        <!-- Thông tin người dùng -->
+        <div class="user-info">
+            {% if thongTinUser %}
+                {% for user in thongTinUser %}
+                    <img src="/static/Images/{{ user.Avatar }}" alt="Avatar" class="avatar" onerror="this.src='/static/Images/default-avatar.jpg';">
+                    <p><strong>ID Người Dùng:</strong> {{ user.MaNguoiDung }}</p>
+                    <p><strong>Tài Khoản:</strong> {{ user.TenDangNhap }}</p>
+                    <p><strong>Tên:</strong> {{ user.HoTen }}</p>
+                    <p><strong>Email:</strong> {{ user.Email }}</p>
+                    <p><a href="/suathongtin/{{ user.MaNguoiDung }}">Sửa Thông tin</a></p>
+                {% endfor %}
+            {% else %}
+                <p>Không tìm thấy thông tin người dùng.</p>
+            {% endif %}
+        </div>
+
+        <!-- Danh sách bài viết của người dùng -->
+        <div class="user-posts">
+            <h2>Bài Viết Của Tôi</h2>
+            {% if baiVietUser %}
+                {% for post in baiVietUser %}
+                    <div class="post-item">
+                        <h3>
+                        {{ post.TieuDe }}
+                        <a href="/updateUserPost/{{ post.MaBaiViet }}" class="edit-icon"><i class="fas fa-edit"></i></a>
+                        <a href="#" onclick="confirmDelete('{{ post.MaBaiViet }}')" class="delete-icon"><i class="fas fa-trash"></i></a>
+                        </h3>
+                        <p><strong>Ngày Đăng:</strong> {{ post.NgayDang if post.NgayDang else 'Chưa có thông tin' }}</p>
+                        {% if post.HinhAnh %}
+                            <img src="/static/Images/{{ post.HinhAnh }}" alt="Ảnh bài viết" class="post-image" onerror="this.src='/static/Images/default-image.jpg';">
+                        {% endif %}
+                        <p><strong>Nội Dung:</strong> {{ post.NoiDung }}</p>
+                        <p><strong>Lượt Xem:</strong> {{ post.LuotXem }}</p>
+                        <p><strong>Lượt Thích:</strong> {{ post.LuotLike }}</p>
+                        <p><strong>Lượt Chia Sẻ:</strong> {{ post.LuotChiaSe }}</p>
+                        <p><strong>Lượt Bình Luận:</strong> {{ post.LuotBL }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Bạn chưa đăng bài viết nào.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% include 'Frontend/footer.html' %}
+    <script>
+        function confirmDelete(maBaiViet) {
+            if (confirm("Bạn có chắc chắn muốn xóa bài viết này không?")) {
+                window.location.href = "/deleteUserPost/" + maBaiViet;
+            }
+        }
+    </script>
+</body>
+</html>

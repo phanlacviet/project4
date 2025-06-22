@@ -1,0 +1,148 @@
+.post-detail {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 30px 0;
+        }
+
+        .post-detail .container {
+            max-width: 800px; /* Cập nhật theo kích thước phần danh sách */
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px 25px;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+        .post-detail .container h1 {
+            font-size: 30px;
+            font-weight: bold; /* hoặc 700 nếu bạn muốn chính xác */
+            margin-top: 0;
+        }
+
+        .post-detail h1,
+        .post-detail h2,
+        .post-detail h3 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .post-detail p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .post-detail img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        .post-detail .meta {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .post-detail .rating {
+            display: inline-block;
+            direction: rtl;
+            margin: 10px 0;
+        }
+
+        .post-detail .rating input {
+            display: none;
+        }
+
+        .post-detail .rating label {
+            font-size: 22px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .post-detail .rating input:checked ~ label,
+        .post-detail .rating label:hover,
+        .post-detail .rating label:hover ~ label {
+            color: #f5c518;
+        }
+
+        .post-detail form {
+            margin: 15px 0;
+        }
+
+        .post-detail textarea {
+            width: 100%;
+            min-height: 70px;
+            padding: 8px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .post-detail button {
+            padding: 6px 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .post-detail button:hover {
+            background-color: #0056b3;
+        }
+
+        .post-detail .comment {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-left: 3px solid #007bff;
+            border-radius: 5px;
+        }
+
+        .post-detail .comment img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .post-detail .comment strong {
+            vertical-align: middle;
+            font-size: 14px;
+        }
+
+        .post-detail .comment p {
+            margin: 5px 0 0 44px;
+            font-size: 13px;
+        }
+
+        .post-detail .note {
+            color: #888;
+            font-size: 13px;
+        }
+.action-buttons {
+    margin: 10px 0;
+}
+
+.btn-like, .btn-share {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.btn-like.liked, .btn-share.shared {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-like:hover, .btn-share:hover {
+    background-color: #f0f0f0;
+}

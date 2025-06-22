@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách bài viết</title>
+    <style>
+        .post {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            max-width: 600px;
+        }
+        .post img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    {% include 'Frontend/header.html' %}
+    <h1>Danh sách bài viết</h1>
+    {% for post in posts %}
+    <div class="post">
+        <h2><a href="{{ url_for('chitietbaiviet_route', id=post.MaBaiViet) }}">{{ post.TieuDe }}</a></h2>
+        <p>{{ post.NoiDung }}</p>
+        {% if post.HinhAnh %}
+        <img src="/static/Images/{{ post.HinhAnh }}" alt="Hình ảnh bài viết">
+        {% endif %}
+        <p><strong>Lượt xem:</strong> {{ post.LuotXem }}</p>
+        <p><strong>Lượt like:</strong> {{ post.LuotLike }}</p>
+        <p><strong>Lượt bình luận:</strong> {{ post.LuotBL }}</p>
+        <p><strong>Lượt chia sẻ:</strong> {{ post.LuotChiaSe }}</p>
+    </div>
+    {% endfor %}
+    {% include 'Frontend/footer.html' %}
+</body>
+</html>

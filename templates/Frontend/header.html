@@ -14,11 +14,13 @@
     
     <nav class="navbar">
       <div class="search-container">
-        <input type="text" placeholder="Tìm công thức..." class="search-input">
-        <button class="search-button"><i class="fas fa-search"></i></button>
+        <form action="/timkiem" method="post" >
+          <input name="tieude" type="text" placeholder="Tìm công thức..." class="search-input">
+          <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+        </form>
       </div>          
       <a href="/home">Trang Chủ</a>
-      <a href="#">Bài Viết</a>
+      <a href="/danhsachbaiviet">Bài Viết</a>
       <a href="#">Ăn Ở Đâu?</a>
       <a href="#">Nguyên Liệu</a>
     </nav>
@@ -32,7 +34,8 @@
         {% if session.user_id %}
           <i class="fas fa-user icon" id="menuIcon"></i>
           <div class="dropdown" id="menuDropdown">
-            <a href="#">Trang cá nhân</a>
+            <a href="/thongTinNguoiDung">Trang cá nhân</a>
+            <a href="/upload_form"></a>
             <a href="#">Cài đặt</a>
             <a href="/logout">Đăng xuất</a>
           </div>
