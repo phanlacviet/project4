@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Chi tiết bài viết - {{ post.TieuDe }}</title>
     <link rel="stylesheet" href="/static/CTBV.css">
 </head>
+
 <body>
     {% include 'Frontend/header.html' %}
 
@@ -21,20 +23,22 @@
 
             <div class="action-buttons">
                 {% if session.user_id %}
-                    {% if da_thich == 0 %}
-                        <a href="/like/{{ post.MaBaiViet }}" class="btn-like"><i class="far fa-thumbs-up"></i> Thích</a>
-                    {% else %}
-                        <a href="/unlike/{{ post.MaBaiViet }}" class="btn-like liked"><i class="fas fa-thumbs-up"></i> Đã thích</a>
-                    {% endif %}
-                    
-                    {% if da_chia_se == 0 %}
-                        <a href="/share/{{ post.MaBaiViet }}" class="btn-share"><i class="far fa-share-square"></i> Chia sẻ</a>
-                    {% else %}
-                        <a href="/unshare/{{ post.MaBaiViet }}" class="btn-share shared"><i class="fas fa-share-square"></i> Đã chia sẻ</a>
-                    {% endif %}
+                {% if da_thich == 0 %}
+                <a href="/like/{{ post.MaBaiViet }}" class="btn-like"><i class="far fa-thumbs-up"></i> Thích</a>
                 {% else %}
-                    <a href="/login" class="btn-like"><i class="far fa-thumbs-up"></i> Thích</a>
-                    <a href="/login" class="btn-share"><i class="far fa-share-square"></i> Chia sẻ</a>
+                <a href="/unlike/{{ post.MaBaiViet }}" class="btn-like liked"><i class="fas fa-thumbs-up"></i> Đã
+                    thích</a>
+                {% endif %}
+
+                {% if da_chia_se == 0 %}
+                <a href="/share/{{ post.MaBaiViet }}" class="btn-share"><i class="far fa-share-square"></i> Chia sẻ</a>
+                {% else %}
+                <a href="/unshare/{{ post.MaBaiViet }}" class="btn-share shared"><i class="fas fa-share-square"></i> Đã
+                    chia sẻ</a>
+                {% endif %}
+                {% else %}
+                <a href="/login" class="btn-like"><i class="far fa-thumbs-up"></i> Thích</a>
+                <a href="/login" class="btn-share"><i class="far fa-share-square"></i> Chia sẻ</a>
                 {% endif %}
             </div>
 
@@ -42,50 +46,77 @@
 
             <h3>Đánh giá:</h3>
             {% if session.user_id %}
-                {% if da_danh_gia == 0 %}
-                    <form method="post" action="/danhgia">
-                        <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
-                        <div class="rating">
-                            {% for star in range(5, 0, -1) %}
-                                <input type="radio" id="star{{ star }}" name="Diem" value="{{ star }}" required>
-                                <label for="star{{ star }}">★</label>
-                            {% endfor %}
-                        </div>
-                        <textarea name="NoiDung" placeholder="Viết nội dung đánh giá..."></textarea>
-                        <button type="submit">Gửi đánh giá</button>
-                    </form>
-                {% else %}
-                    <p class="note">Bạn đã đánh giá bài viết này.</p>
-                {% endif %}
+            {% if da_danh_gia == 0 %}
+            <form method="post" action="/danhgia">
+                <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+                <div class="rating">
+                    {% for star in range(5, 0, -1) %}
+                    <input type="radio" id="star{{ star }}" name="Diem" value="{{ star }}" required>
+                    <label for="star{{ star }}">★</label>
+                    {% endfor %}
+                </div>
+                <textarea name="NoiDung" placeholder="Viết nội dung đánh giá..."></textarea>
+                <button type="submit">Gửi đánh giá</button>
+            </form>
             {% else %}
-                <p class="note">Vui lòng <a href="/login">đăng nhập</a> để đánh giá.</p>
+            <p class="note">Bạn đã đánh giá bài viết này.</p>
+            {% endif %}
+            {% else %}
+            <p class="note">Vui lòng <a href="/login">đăng nhập</a> để đánh giá.</p>
             {% endif %}
 
             <h3>Bình luận:</h3>
             {% if session.user_id %}
-                {% if da_binh_luan == 0 %}
-                    <form method="post" action="/dangbinhluan">
-                        <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
-                        <textarea name="NoiDung" placeholder="Viết bình luận..."></textarea>
-                        <button type="submit">Đăng bình luận</button>
-                    </form>
-                {% else %}
-                    <p class="note">Bạn đã bình luận</p>
-                {% endif %}
+            {% if da_binh_luan == 0 %}
+            <form method="post" action="/dangbinhluan">
+                <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+                <textarea name="NoiDung" placeholder="Viết bình luận..."></textarea>
+                <button type="submit">Đăng bình luận</button>
+            </form>
             {% else %}
-                <textarea name="NoiDung" placeholder="Viết bình luận..." disabled></textarea>
-                <a href="/home"><button>Đăng bình luận</button></a>
+            <p class="note">Bạn đã bình luận</p>
+            {% endif %}
+            {% else %}
+            <textarea name="NoiDung" placeholder="Viết bình luận..." disabled></textarea>
+            <a href="/home"><button>Đăng bình luận</button></a>
             {% endif %}
 
             {% for comment in comments %}
-            <div class="comment">
+            <div class="comment" id="comment-{{ comment.MaBinhLuan }}">
                 <img src="/static/Images/{{ comment.Avatar }}" alt="Avatar">
                 <strong>{{ comment.TenDangNhap }}</strong>
                 <p>{{ comment.NoiDung }}</p>
+                <a href="javascript:void(0)" class="reply-toggle" data-id="{{ comment.MaBinhLuan }}">Trả lời</a>
+
+                {% for reply in comment.Replies %}
+                <div class="reply">
+                    <strong>{{ reply.TenDangNhap }} trả lời:</strong>
+                    <p>{{ reply.NoiDung }}</p>
+                </div>
+                {% endfor %}
+                <!-- form trả lời ẩn -->
+                <form method="post" action="{{ url_for('reply_comment_route') }}" class="reply-form"
+                    id="form-{{ comment.MaBinhLuan }}" style="display:none; margin-top:10px;">
+                    <input type="hidden" name="MaBinhLuan" value="{{ comment.MaBinhLuan }}">
+                    <input type="hidden" name="MaBaiViet" value="{{ post.MaBaiViet }}">
+                    <textarea name="NoiDung" placeholder="Viết trả lời..." required
+                        style="width:100%; min-height:60px"></textarea>
+                    <button type="submit">Gửi trả lời</button>
+                </form>
             </div>
             {% endfor %}
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.reply-toggle').forEach(function (link) {
+            link.addEventListener('click', function () {
+                var id = this.getAttribute('data-id');
+                var form = document.getElementById('form-' + id);
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+    </script>
     {% include 'Frontend/footer.html' %}
 </body>
+
 </html>

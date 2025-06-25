@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách thông báo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 30px;
+        }
+        .thong-bao {
+            background-color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .thong-bao .tieu-de {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .thong-bao .ngay {
+            font-size: 13px;
+            color: #888;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+        .thong-bao .noi-dung {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Danh sách thông báo</h1>
+
+    {% if danhsach %}
+        {% for tb in danhsach %}
+        <div class="thong-bao">
+            <div class="tieu-de">{{ tb.TieuDe }}</div>
+            <div class="ngay">{{ tb.NgayGui.strftime('%d/%m/%Y %H:%M') }}</div>
+            <div class="noi-dung">{{ tb.NoiDung }}</div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>Không có thông báo nào.</p>
+    {% endif %}
+
+</body>
+</html>

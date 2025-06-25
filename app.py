@@ -11,8 +11,8 @@ from favorites.crud import get_favorites, create_favorite, get_favorite_by_id, u
 from ratings.crud import get_ratings, create_rating, get_rating_by_id, update_rating, delete_rating
 from Frontend import (register, login, home, logout, upload_form, upload_file, get_baiviet, check_binh_luan, 
                      get_luot_like, get_luot_BL, get_luot_chia_se, get_chitiet_baiviet)
-from Frontend import danh_gia,check_danh_gia,timkiem,dang_binh_luan,check_thich,check_chia_se,like_post,unlike_post,share_post,unshare_post
-from Frontend import userInfo,update_user_post,userPosts,updateUserInfo,get_post_by_id,delete_user_post
+from Frontend import danh_gia,check_danh_gia,timkiem,dang_binh_luan,check_thich,check_chia_se,like_post,unlike_post,share_post,unshare_post,lay_mon_an_theo_danh_muc,get_ten_dang_nhap
+from Frontend import userInfo,update_user_post,userPosts,updateUserInfo,delete_user_post,userPostShare,userPostlike,ThongBao,get_thong_tin_bai_viet,add_reply,getAllThongBao
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'  # Khóa bí mật cho flash messages
@@ -341,7 +341,6 @@ def logout_route():
 
 @app.route('/upload_form')
 def upload_form_route():
-    
     return upload_form()
 
 @app.route('/upload', methods=['POST'])
@@ -354,10 +353,16 @@ def danhsachbaiviet_route():
     posts = get_baiviet()
     # Tạo danh sách bài viết kèm thông tin bổ sung
     posts_with_info = []
+    ma_nguoi_dung = session.get('user_id')
     for post in posts:
         luot_like = get_luot_like(post.MaBaiViet)
         luot_BL = get_luot_BL(post.MaBaiViet)
         luot_chia_se = get_luot_chia_se(post.MaBaiViet)
+        da_like = 0
+        da_chia_se = 0
+        if ma_nguoi_dung:
+            da_like = check_thich(post.MaBaiViet, ma_nguoi_dung)
+            da_chia_se = check_chia_se(post.MaBaiViet, ma_nguoi_dung)
         posts_with_info.append({
             'MaBaiViet': post.MaBaiViet,
             'TieuDe': post.TieuDe,
@@ -366,7 +371,9 @@ def danhsachbaiviet_route():
             'LuotXem': post.LuotXem,
             'LuotLike': luot_like,
             'LuotBL': luot_BL,
-            'LuotChiaSe': luot_chia_se
+            'LuotChiaSe': luot_chia_se,
+            'DaLike': da_like,
+            'DaChiaSe': da_chia_se
         })
     return render_template('Frontend/danhsachbaiviet.html', posts=posts_with_info)
 
@@ -431,7 +438,20 @@ def like_route(id):
         return redirect('/login')
     ma_nguoi_dung = session['user_id']
     like_post(ma_nguoi_dung, id)
-    return redirect(url_for('chitietbaiviet_route', id=id))
+    danhmuc = request.args.get('danhmuc')
+    thong_tin_bai = get_thong_tin_bai_viet(id)
+    if thong_tin_bai:
+        ma_nguoi_dung_bai, tieu_de_bai = thong_tin_bai
+        if ma_nguoi_dung_bai != ma_nguoi_dung:
+            ThongBao(ma_nguoi_dung_bai, "Bài viết được yêu thích", f"'{tieu_de_bai}' đã được một người dùng yêu thích.")
+    from_list = request.args.get('from_list')
+    if from_list == '1':
+        return redirect(url_for('danhsachbaiviet_route'))
+    elif from_list == '2':
+        return redirect(url_for('DanhSachMonAnTheoDanhMuc', danhmuc=danhmuc))
+    else:
+        return redirect(url_for('chitietbaiviet_route', id=id))
+
 
 @app.route('/unlike/<int:id>')
 def unlike_route(id):
@@ -439,15 +459,38 @@ def unlike_route(id):
         return redirect('/login')
     ma_nguoi_dung = session['user_id']
     unlike_post(ma_nguoi_dung, id)
-    return redirect(url_for('chitietbaiviet_route', id=id))
+    danhmuc = request.args.get('danhmuc')
+    from_list = request.args.get('from_list')
+    if from_list == '1':
+        return redirect(url_for('danhsachbaiviet_route'))
+    elif from_list == '2':
+        return redirect(url_for('DanhSachMonAnTheoDanhMuc', danhmuc=danhmuc))
+    else:
+        return redirect(url_for('chitietbaiviet_route', id=id))
+
 
 @app.route('/share/<int:id>')
 def share_route(id):
     if 'user_id' not in session:
         return redirect('/login')
+
     ma_nguoi_dung = session['user_id']
     share_post(ma_nguoi_dung, id)
-    return redirect(url_for('chitietbaiviet_route', id=id))
+    danhmuc = request.args.get('danhmuc')
+    thong_tin_bai = get_thong_tin_bai_viet(id)
+    if thong_tin_bai:
+        ma_nguoi_dung_bai, tieu_de_bai = thong_tin_bai
+        if ma_nguoi_dung_bai != ma_nguoi_dung:
+            ThongBao(ma_nguoi_dung_bai, "Bài viết được chia sẻ", f"'{tieu_de_bai}' đã được một người dùng chia sẻ.")
+
+    from_list = request.args.get('from_list')
+    if from_list == '1':
+        return redirect(url_for('danhsachbaiviet_route'))
+    elif from_list == '2':
+        return redirect(url_for('DanhSachMonAnTheoDanhMuc', danhmuc=danhmuc))
+    else:
+        return redirect(url_for('chitietbaiviet_route', id=id))
+
 
 @app.route('/unshare/<int:id>')
 def unshare_route(id):
@@ -455,7 +498,15 @@ def unshare_route(id):
         return redirect('/login')
     ma_nguoi_dung = session['user_id']
     unshare_post(ma_nguoi_dung, id)
-    return redirect(url_for('chitietbaiviet_route', id=id))
+    danhmuc = request.args.get('danhmuc')
+    from_list = request.args.get('from_list')
+    if from_list == '1':
+        return redirect(url_for('danhsachbaiviet_route'))
+    elif from_list == '2':
+        return redirect(url_for('DanhSachMonAnTheoDanhMuc', danhmuc=danhmuc))
+    else:
+        return redirect(url_for('chitietbaiviet_route', id=id))
+
 
 
 @app.route('/thongTinNguoiDung')
@@ -465,6 +516,7 @@ def ThongTinCaNhan():
     ma_nguoi_dung = session['user_id']
     thongTinUser = userInfo(ma_nguoi_dung)
     baiVietUser = userPosts(ma_nguoi_dung)
+    baiVietDaChiaSe = userPostShare(ma_nguoi_dung)
     posts_with_info = []
     for post in baiVietUser:
         luot_like = get_luot_like(post.MaBaiViet)
@@ -480,7 +532,49 @@ def ThongTinCaNhan():
             'LuotBL': luot_BL,
             'LuotChiaSe': luot_chia_se
         })
-    return render_template('Frontend/ThongTinNguoiDung.html',thongTinUser = thongTinUser,baiVietUser = posts_with_info)
+    shared_posts_info = []
+    for post in baiVietDaChiaSe:
+        luot_like = get_luot_like(post.MaBaiViet)
+        luot_BL = get_luot_BL(post.MaBaiViet)
+        luot_chia_se = get_luot_chia_se(post.MaBaiViet)
+        shared_posts_info.append({
+            'MaBaiViet': post.MaBaiViet,
+            'TieuDe': post.TieuDe,
+            'NoiDung': post.NoiDung,
+            'HinhAnh': post.HinhAnh,
+            'LuotXem': post.LuotXem,
+            'LuotLike': luot_like,
+            'LuotBL': luot_BL,
+            'LuotChiaSe': luot_chia_se,
+            'NgayDang': getattr(post, 'NgayDang', None)
+        })
+
+    return render_template('Frontend/ThongTinNguoiDung.html',thongTinUser = thongTinUser,baiVietUser = posts_with_info,baiVietChiaSe=shared_posts_info)
+
+@app.route('/dsBaiVietYeuThich')
+def danh_sach_bai_viet_yeu_thich():
+    if 'user_id' not in session:
+        return redirect('/login')
+    ma_nguoi_dung = session['user_id']
+    bai_viet_yeu_thich = userPostlike(ma_nguoi_dung)
+    posts_with_info = []
+    for post in bai_viet_yeu_thich:
+        luot_like = get_luot_like(post.MaBaiViet)
+        luot_BL = get_luot_BL(post.MaBaiViet)
+        luot_chia_se = get_luot_chia_se(post.MaBaiViet)
+        posts_with_info.append({
+            'MaBaiViet': post.MaBaiViet,
+            'TieuDe': post.TieuDe,
+            'NoiDung': post.NoiDung,
+            'HinhAnh': post.HinhAnh,
+            'LuotXem': post.LuotXem,
+            'LuotLike': luot_like,
+            'LuotBL': luot_BL,
+            'LuotChiaSe': luot_chia_se,
+            'NgayDang': getattr(post, 'NgayDang', None),
+            'MaNguoiDung': post.MaNguoiDung
+        })
+    return render_template('Frontend/DanhSachYeuThich.html', baiVietYeuThich=posts_with_info)
 
 @app.route('/suathongtin/<int:MaNguoiDung>')
 def suathongtin(MaNguoiDung):
@@ -491,6 +585,7 @@ def suathongtin(MaNguoiDung):
 def suaThongTinNguoiDung():
     if 'user_id' not in session:
         return redirect('/login')
+    ma_nguoi_dung = session['user_id']
     data = {
         'MatKhau' : request.form['MatKhau'],
         'HoTen' : request.form['HoTen'],
@@ -499,6 +594,7 @@ def suaThongTinNguoiDung():
         'MaNguoiDung' : request.form['MaNguoiDung']
     }
     updateUserInfo(data=data)
+    ThongBao(ma_nguoi_dung=ma_nguoi_dung,tieu_de="Thay đổi thông tin người dùng",noi_dung="Bạn đã thay đổi thông tin thành công")
     return redirect(url_for('ThongTinCaNhan'))
 
 @app.route('/deleteUserPost/<int:MaBaiViet>')
@@ -536,6 +632,63 @@ def updateUserPost():
         data['HinhAnh'] = filename
     update_user_post(ma_bai_viet, session['user_id'], data)
     return redirect('/thongTinNguoiDung')
+
+@app.route('/MonAnTheoDanhMuc/<danhmuc>')
+def DanhSachMonAnTheoDanhMuc(danhmuc):
+    mapping = {
+        'MC': 'Món Chính',
+        'TU': 'Thức Uống',
+        'TM': 'Món Tráng Miệng',
+        'GD': 'Cho Gia Đình',
+        'DC': 'Đồ Ăn Chay'
+    }
+    tieude_daydu = mapping.get(danhmuc, 'Không xác định')
+    posts = lay_mon_an_theo_danh_muc(danhmuc=danhmuc)
+    ma_nguoi_dung = session['user_id']
+    posts_with_info = []
+    for post in posts:
+        luot_like = get_luot_like(post.MaBaiViet)
+        luot_BL = get_luot_BL(post.MaBaiViet)
+        luot_chia_se = get_luot_chia_se(post.MaBaiViet)
+        ten_dang_nhap = get_ten_dang_nhap(post.MaNguoiDung)
+        da_like = 0
+        da_chia_se = 0
+        if ma_nguoi_dung:
+            da_like = check_thich(post.MaBaiViet, ma_nguoi_dung)
+            da_chia_se = check_chia_se(post.MaBaiViet, ma_nguoi_dung)
+        posts_with_info.append({
+            'MaBaiViet': post.MaBaiViet,
+            'TieuDe': post.TieuDe,
+            'NoiDung': post.NoiDung,
+            'HinhAnh': post.HinhAnh,
+            'LuotXem': post.LuotXem,
+            'LuotLike': luot_like,
+            'LuotBL': luot_BL,
+            'LuotChiaSe': luot_chia_se,
+            'NgayDang': post.NgayDang,
+            'TenDangNhap': ten_dang_nhap,
+            'DaLike': da_like,
+            'DaChiaSe': da_chia_se
+        })
+    return render_template('Frontend/MonAnTheoDanhMuc.html', posts=posts_with_info, tieude=tieude_daydu,danhmuc_code=danhmuc)
+
+@app.route('/reply_comment', methods=['POST'])
+def reply_comment_route():
+    if 'user_id' not in session:
+        return redirect('/login')
+    ma_nguoi_dung = session['user_id']
+    ma_binhluan = request.form['MaBinhLuan']
+    noi_dung = request.form['NoiDung']
+    add_reply(ma_binhluan, ma_nguoi_dung, noi_dung)
+    ma_bai_viet = request.form['MaBaiViet']
+    return redirect(url_for('chitietbaiviet_route', id=ma_bai_viet))
+
+@app.route('/DanhSachThongBao')
+def lay_thong_bao():
+    ma_nguoi_dung = session['user_id']
+    danhsach = getAllThongBao(ma_nguoi_dung=ma_nguoi_dung)
+    return render_template('ThongBao.html',danhsach=danhsach)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

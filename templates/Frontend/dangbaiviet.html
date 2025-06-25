@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/style.css">
-    <title>Thêm bài viết</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/static/style.css">
+  <title>Thêm bài viết</title>
 </head>
+
 <body>
-  {}
-    <h1>Thêm bài viết</h1>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="hidden" name="MaNguoiDung" value="{{ma_nguoi_dung}}"><br>
-        <label>Tiêu đề:</label><input type="text" name="TieuDe" required><br>
-        <label>Nội dung:</label><textarea name="NoiDung" required></textarea><br>
-        <label>Hình ảnh:</label><input type="file" name="HinhAnh" accept=".jpg" required><br>
-        <button type="submit">Đăng bài</button>
-    </form>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul>
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+  <h1>Thêm bài viết</h1>
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <input type="hidden" name="MaNguoiDung" value="{{ma_nguoi_dung}}"><br>
+    <label>Tiêu đề:</label><input type="text" name="TieuDe" required><br>
+    <label>Nội dung:</label><textarea name="NoiDung" required></textarea><br>
+    <label>Hình ảnh:</label><input type="file" name="HinhAnh" accept=".jpg" required><br>
+    <label>Phân loại:</label><br>
+    <label><input type="radio" name="PhanLoai" value="MC" required> Món Chính</label><br>
+    <label><input type="radio" name="PhanLoai" value="TU"> Thức Uống</label><br>
+    <label><input type="radio" name="PhanLoai" value="TM"> Món Tráng Miệng</label><br>
+    <label><input type="radio" name="PhanLoai" value="GD"> Cho Gia Đình</label><br>
+    <label><input type="radio" name="PhanLoai" value="DC"> Đồ Ăn Chay</label><br>
+    <button type="submit">Đăng bài</button>
+  </form>
 </body>
+
 </html>

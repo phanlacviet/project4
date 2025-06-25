@@ -87,15 +87,16 @@ def upload_file():
     if file.filename == '':
         flash('Chưa chọn file')
         return redirect(url_for('upload_form'))
+    phan_loai = request.form.get('PhanLoai')
     if file and allowed_file(file.filename):
         filename = file.filename
         file.save(os.path.join(UPLOAD_FOLDER, filename))
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO TVV_BaiViet (MaNguoiDung, TieuDe, NoiDung, HinhAnh)
-            VALUES (?, ?, ?, ?)
-        """, (request.form['MaNguoiDung'], request.form['TieuDe'], request.form['NoiDung'], filename))
+            INSERT INTO TVV_BaiViet (MaNguoiDung, TieuDe, NoiDung, HinhAnh, MaPhanLoai)
+            VALUES (?, ?, ?, ?,?)
+        """, (request.form['MaNguoiDung'], request.form['TieuDe'], request.form['NoiDung'], filename, phan_loai))
         conn.commit()
         cursor.close()
         conn.close()
@@ -150,39 +151,74 @@ def get_chitiet_baiviet(id):
     conn = get_connection()
     cursor = conn.cursor()
     
-    # Lấy thông tin bài viết
+    # 1. Lấy thông tin bài viết
     cursor.execute("SELECT * FROM TVV_BaiViet WHERE MaBaiViet = ?", (id,))
     post = cursor.fetchone()
     
-    # Tăng lượt xem
+    # 2. Tăng lượt xem
     cursor.execute("UPDATE TVV_BaiViet SET LuotXem = LuotXem + 1 WHERE MaBaiViet = ?", (id,))
     conn.commit()
     
-    # Lấy đánh giá trung bình
+    # 3. Lấy đánh giá trung bình
     cursor.execute("SELECT AVG(CAST(Diem AS FLOAT)) FROM TVV_DanhGia WHERE MaBaiViet = ?", (id,))
     avg_rating_raw = cursor.fetchone()
-    avg_rating = avg_rating_raw[0] if avg_rating_raw[0] is not None else 0  # Xử lý khi không có dữ liệu
+    avg_rating = avg_rating_raw[0] or 0
     
-    # Lấy danh sách bình luận
-    cursor.execute("SELECT MaBinhLuan, MaBaiViet, MaNguoiDung, NoiDung, NgayBinhLuan FROM TVV_BinhLuan WHERE MaBaiViet = ? order by NgayBinhLuan DESC", (id,))
+    # 4. Lấy danh sách bình luận gốc
+    cursor.execute("""
+        SELECT MaBinhLuan, MaNguoiDung, NoiDung, NgayBinhLuan 
+        FROM TVV_BinhLuan 
+        WHERE MaBaiViet = ? 
+        ORDER BY NgayBinhLuan DESC
+    """, (id,))
     comments_raw = cursor.fetchall()
     
-    # Chuyển đổi danh sách bình luận thành danh sách từ điển
+    # 5. Chuyển thành dict và thu thập all MaBinhLuan
     comments = []
-    for comment in comments_raw:
-        cursor.execute("SELECT TenDangNhap, Avatar FROM TVV_NguoiDung WHERE MaNguoiDung = ?", (comment.MaNguoiDung,))
-        user_info = cursor.fetchone()
-        
-        comment_dict = {
-            'MaBinhLuan': comment.MaBinhLuan,
-            'MaBaiViet': comment.MaBaiViet,
-            'MaNguoiDung': comment.MaNguoiDung,
-            'NoiDung': comment.NoiDung,
-            'NgayBinhLuan': comment.NgayBinhLuan,
-            'TenDangNhap': user_info.TenDangNhap if user_info else 'Unknown',
-            'Avatar': user_info.Avatar if user_info else ''
-        }
-        comments.append(comment_dict)
+    parent_ids = []
+    for c in comments_raw:
+        parent_ids.append(c.MaBinhLuan)
+        comments.append({
+            'MaBinhLuan': c.MaBinhLuan,
+            'MaNguoiDung': c.MaNguoiDung,
+            'NoiDung': c.NoiDung,
+            'NgayBinhLuan': c.NgayBinhLuan,
+            'TenDangNhap': None,  
+            'Avatar': None,        
+            'Replies': []
+        })
+    
+    # 6. Điền thông tin người comment gốc
+    for comment in comments:
+        cursor.execute("SELECT TenDangNhap, Avatar FROM TVV_NguoiDung WHERE MaNguoiDung = ?",
+                       (comment['MaNguoiDung'],))
+        ui = cursor.fetchone()
+        if ui:
+            comment['TenDangNhap'] = ui.TenDangNhap
+            comment['Avatar'] = ui.Avatar
+    
+    # 7. Lấy tất cả replies cho những MaBinhLuan trên
+    if parent_ids:
+        placeholders = ','.join('?' * len(parent_ids))
+        sql = f"""
+            SELECT MaBinhLuanBac2, MaBinhLuan, MaNguoiDung, TenDangNhap, NoiDung, NgayBinhLuan
+            FROM TVV_BinhLuan_Bac2
+            WHERE MaBinhLuan IN ({placeholders})
+            ORDER BY NgayBinhLuan ASC
+        """
+        cursor.execute(sql, parent_ids)
+        replies_raw = cursor.fetchall()
+        reply_map = {}
+        for r in replies_raw:
+            reply_map.setdefault(r.MaBinhLuan, []).append({
+                'MaBinhLuanBac2': r.MaBinhLuanBac2,
+                'MaNguoiDung':   r.MaNguoiDung,
+                'TenDangNhap':   r.TenDangNhap,
+                'NoiDung':       r.NoiDung,
+                'NgayBinhLuan':  r.NgayBinhLuan
+            })
+        for comment in comments:
+            comment['Replies'] = reply_map.get(comment['MaBinhLuan'], [])
     
     cursor.close()
     conn.close()
@@ -192,6 +228,20 @@ def get_chitiet_baiviet(id):
         'avg_rating': avg_rating,
         'comments': comments
     }
+
+def add_reply(ma_binhluan, ma_nguoi_dung, noi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT TenDangNhap FROM TVV_NguoiDung WHERE MaNguoiDung = ?", (ma_nguoi_dung,))
+    ten = cursor.fetchone().TenDangNhap
+    cursor.execute("""
+        INSERT INTO TVV_BinhLuan_Bac2 (MaBinhLuan, MaNguoiDung, TenDangNhap, NoiDung)
+        VALUES (?, ?, ?, ?)
+    """, (ma_binhluan, ma_nguoi_dung, ten, noi_dung))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
 def dang_binh_luan(ma_nguoi_dung, ma_bai_viet, noi_dung):
     conn = get_connection()  
     cursor = conn.cursor()
@@ -303,6 +353,32 @@ def userPosts(ma_nguoi_dung):
     conn.close()
     return userPosts
 
+def userPostShare(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT MaBaiViet FROM TVV_Chiase WHERE MaNguoiDung = ?", (ma_nguoi_dung))
+    mabaiviet = cursor.fetchall()
+    ids = [str(row[0]) for row in mabaiviet]
+    placeholders = ','.join('?' * len(ids))
+    query = f"SELECT * FROM TVV_BaiViet WHERE MaBaiViet IN ({placeholders})"
+    cursor.execute(query, ids)
+    baiviet_details = cursor.fetchall()
+    conn.close()
+    return baiviet_details
+
+def userPostlike(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT b.*
+        FROM TVV_YeuThich y
+        JOIN TVV_BaiViet b ON y.MaBaiViet = b.MaBaiViet
+        WHERE y.MaNguoiDung = ?
+    """, (ma_nguoi_dung,))
+    baiviet_details = cursor.fetchall()
+    conn.close()
+    return baiviet_details
+
 def userInfo(ma_nguoi_dung):
     conn = get_connection()
     cursor = conn.cursor()
@@ -358,3 +434,40 @@ def delete_user_post(ma_bai_viet):
     conn.commit()
     cursor.close()
     conn.close()
+def ThongBao(ma_nguoi_dung,tieu_de,noi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("Insert into TVV_ThongBao(MaNguoiDung,TieuDe,NoiDung) values (?,?,?)", (ma_nguoi_dung,tieu_de,noi_dung))
+    conn.commit()
+    cursor.close()
+    conn.close()
+def get_thong_tin_bai_viet(ma_bai_viet):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT MaNguoiDung, TieuDe FROM TVV_BaiViet WHERE MaBaiViet = ?", (ma_bai_viet,))
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result
+def lay_mon_an_theo_danh_muc(danhmuc):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("Select *from TVV_BaiViet Where MaPhanLoai = ?",(danhmuc,))
+    danhsach = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return danhsach
+def get_ten_dang_nhap(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT TenDangNhap FROM TVV_NguoiDung WHERE MaNguoiDung = ?", (ma_nguoi_dung,))
+    result = cursor.fetchone()
+    conn.close()
+    return result.TenDangNhap if result else 'Không rõ'
+def getAllThongBao(ma_nguoi_dung):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT *FROM TVV_ThongBao WHERE MaNguoiDung = ?", (ma_nguoi_dung,))
+    danhsachthongbao = cursor.fetchall()
+    conn.close()
+    return danhsachthongbao

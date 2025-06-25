@@ -56,7 +56,27 @@
             {% endif %}
         </div>
     </div>
-
+    <div class="user-shared-posts">
+        <h2>Bài Viết Tôi Đã Chia Sẻ</h2>
+        {% if baiVietChiaSe %}
+            {% for post in baiVietChiaSe %}
+                <div class="post-item">
+                    <h3>{{ post.TieuDe }}</h3>
+                    <p><strong>Ngày Đăng:</strong> {{ post.NgayDang if post.NgayDang else 'Không rõ' }}</p>
+                    {% if post.HinhAnh %}
+                        <img src="/static/Images/{{ post.HinhAnh }}" alt="Ảnh bài viết" class="post-image" onerror="this.src='/static/Images/default-image.jpg';">
+                    {% endif %}
+                    <p><strong>Nội Dung:</strong> {{ post.NoiDung }}</p>
+                    <p><strong>Lượt Xem:</strong> {{ post.LuotXem }}</p>
+                    <p><strong>Lượt Thích:</strong> {{ post.LuotLike }}</p>
+                    <p><strong>Lượt Chia Sẻ:</strong> {{ post.LuotChiaSe }}</p>
+                    <p><strong>Lượt Bình Luận:</strong> {{ post.LuotBL }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Bạn chưa chia sẻ bài viết nào.</p>
+        {% endif %}
+    </div>
     {% include 'Frontend/footer.html' %}
     <script>
         function confirmDelete(maBaiViet) {

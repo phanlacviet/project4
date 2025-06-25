@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài Viết Đã Yêu Thích</title>
+    <link rel="stylesheet" href="/static/ThongTinNguoiDung.css">
+</head>
+<body>
+    {% include 'Frontend/header.html' %}
+    
+    <div class="user-liked-posts">
+        <h1>Danh Sách Bài Viết Bạn Đã Yêu Thích</h1>
+        {% if baiVietYeuThich %}
+            {% for post in baiVietYeuThich %}
+                <div class="post-item">
+                    <h3>{{ post.TieuDe }}</h3>
+                    <p><strong>Ngày Đăng:</strong> {{ post.NgayDang if post.NgayDang else 'Không rõ' }}</p>
+                    {% if post.HinhAnh %}
+                        <img src="/static/Images/{{ post.HinhAnh }}" alt="Ảnh bài viết" class="post-image" onerror="this.src='/static/Images/default-image.jpg';">
+                    {% endif %}
+                    <p><strong>Nội Dung:</strong> {{ post.NoiDung }}</p>
+                    <p><strong>Lượt Xem:</strong> {{ post.LuotXem }}</p>
+                    <p><strong>Lượt Thích:</strong> {{ post.LuotLike }}</p>
+                    <p><strong>Lượt Chia Sẻ:</strong> {{ post.LuotChiaSe }}</p>
+                    <p><strong>Lượt Bình Luận:</strong> {{ post.LuotBL }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Bạn chưa yêu thích bài viết nào.</p>
+        {% endif %}
+    </div>
+
+    {% include 'Frontend/footer.html' %}
+</body>
+</html>

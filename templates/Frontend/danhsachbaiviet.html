@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách bài viết</title>
     <link rel="stylesheet" href="/static/DSBV.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
     {% include 'Frontend/header.html' %}
 
@@ -17,15 +20,40 @@
                 {% if post.HinhAnh %}
                 <img src="/static/Images/{{ post.HinhAnh }}" alt="Hình ảnh bài viết">
                 {% endif %}
+
                 <div class="post-content">
-                    <h2><a href="{{ url_for('chitietbaiviet_route', id=post.MaBaiViet) }}">{{ post.TieuDe }}</a></h2>
+                    <h2>
+                        <a href="{{ url_for('chitietbaiviet_route', id=post.MaBaiViet) }}">
+                            {{ post.TieuDe }}
+                        </a>
+                    </h2>
                     <p>{{ post.NoiDung }}</p>
                 </div>
+
                 <div class="interactions">
-                    <button><i class="fas fa-eye"></i> {{ post.LuotXem }}</button>
-                    <button><i class="fas fa-thumbs-up"></i> {{ post.LuotLike }}</button>
-                    <button><i class="fas fa-comment"></i> {{ post.LuotBL }}</button>
-                    <button><i class="fas fa-share"></i> {{ post.LuotChiaSe }}</button>
+                    <span><i class="fas fa-eye"></i> {{ post.LuotXem }}</span>
+
+                    {% if post.DaLike %}
+                    <a href="{{ url_for('unlike_route', id=post.MaBaiViet) }}?from_list=1">
+                        <button><i class="fas fa-thumbs-up" style="color:red;"></i> {{ post.LuotLike }}</button>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('like_route', id=post.MaBaiViet) }}?from_list=1">
+                        <button><i class="far fa-thumbs-up" style="color:gray;"></i> {{ post.LuotLike }}</button>
+                    </a>
+                    {% endif %}
+
+                    <span><i class="fas fa-comment"></i> {{ post.LuotBL }}</span>
+
+                    {% if post.DaChiaSe %}
+                    <a href="{{ url_for('unshare_route', id=post.MaBaiViet) }}?from_list=1">
+                        <button><i class="fas fa-share" style="color:green;"></i> {{ post.LuotChiaSe }}</button>
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('share_route', id=post.MaBaiViet) }}?from_list=1">
+                        <button><i class="fas fa-share"></i> {{ post.LuotChiaSe }}</button>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -34,4 +62,5 @@
 
     {% include 'Frontend/footer.html' %}
 </body>
+
 </html>
