@@ -687,7 +687,7 @@ def reply_comment_route():
 def lay_thong_bao():
     ma_nguoi_dung = session['user_id']
     danhsach = getAllThongBao(ma_nguoi_dung=ma_nguoi_dung)
-    return render_template('ThongBao.html',danhsach=danhsach)
+    return render_template('Frontend/ThongBao.html',danhsach=danhsach)
 
 
 if __name__ == '__main__':

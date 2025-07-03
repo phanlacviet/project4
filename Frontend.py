@@ -358,6 +358,10 @@ def userPostShare(ma_nguoi_dung):
     cursor = conn.cursor()
     cursor.execute("SELECT MaBaiViet FROM TVV_Chiase WHERE MaNguoiDung = ?", (ma_nguoi_dung))
     mabaiviet = cursor.fetchall()
+    if not mabaiviet:
+        cursor.close()
+        conn.close()
+        return []
     ids = [str(row[0]) for row in mabaiviet]
     placeholders = ','.join('?' * len(ids))
     query = f"SELECT * FROM TVV_BaiViet WHERE MaBaiViet IN ({placeholders})"
